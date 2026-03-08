@@ -108,13 +108,7 @@ function SharePage({setPage,theme}){
   const shareLinks=[
     {label:"WhatsApp",icon:"🟢",color:"#25d366",bg:"#edfaf2",url:`https://wa.me/?text=${encodeURIComponent("I've been using this app to send more heartfelt messages to the people I love — thought you might like it too 💛 "+appUrl)}`},
     {label:"iMessage / SMS",icon:"💬",color:"#34aadc",bg:"#edf6fd",url:`sms:?&body=${encodeURIComponent("I've been using Heartfully to send nicer messages — check it out 💛 "+appUrl)}`},
-    {label:"Email",icon:"✉️",color:"#c9746b",bg:"#fdf0ee",url:`mailto:?subject=${encodeURIComponent("You'd love this app")}&body=${encodeURIComponent("Hey,
-
-I've been using this little app called Heartfully to send more meaningful messages to the people I care about. Thought of you.
-
-Take a look: "+appUrl+"
-
-No sign-up, totally free 💛")}`},
+    {label:"Email",icon:"✉️",color:"#c9746b",bg:"#fdf0ee",url:`mailto:?subject=${encodeURIComponent("You'd love this app")}&body=${encodeURIComponent("Thought you might love this! I use Heartfully to send heartfelt messages to the people I care about: "+appUrl+" 💛")}`},
     {label:"Facebook",icon:"📘",color:"#1877f2",bg:"#edf3fd",url:`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(appUrl)}`},
     {label:"X / Twitter",icon:"🐦",color:"#1da1f2",bg:"#e8f5fd",url:`https://twitter.com/intent/tweet?text=${encodeURIComponent("This little app helps you send more heartfelt messages to the people you love 💛")}&url=${encodeURIComponent(appUrl)}`},
     {label:"Instagram",icon:"📸",color:"#e1306c",bg:"#fdeef4",url:"#",note:"Copy the link and share in your bio or story"}
