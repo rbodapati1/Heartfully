@@ -150,16 +150,17 @@ function AppPage({theme}){
       :`Write a heartfelt message for my ${rel.label.toLowerCase()} named ${person.name} (I call them "${addr}"). I want to let them know I'm thinking of them today.`;
     try{
       const res=await fetch("/api/claude",{method:"POST",headers:{"Content-Type":"application/json"},
-        body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:1000,
+        body:JSON.stringify({model:"claude-sonnet-4-5",max_tokens:1000,
           system:`You write short, meaningful, heartfelt messages from one person to another.\nRelationship tone baseline: ${rel.tone}.\n${toneInstr}\n${notesInstr}\n${intentInstr}\n${ni}\nWrite 2–4 sentences. No clichés. Be specific, warm, human. Never start with "Hey" or "Hi".\n${lang}\nReturn ONLY the message text, nothing else.`,
           messages:[{role:"user",content:userMsg}]
         })});
       const d=await res.json();
-      setMessages(p=>({...p,[person.id]:d.content?.[0]?.text?.trim()||fallback(person)}));
+      if(d.error){console.error("API error:",d.error);setMessages(p=>({...p,[person.id]:fallback(person)}));}
+      else{setMessages(p=>({...p,[person.id]:d.content?.[0]?.text?.trim()||fallback(person)}));}
       if(activeIntent)setFreePrompt("");
-    }catch{
+    }catch(err){
+      console.error("Generation error:", err);
       setMessages(p=>({...p,[person.id]:fallback(person)}));
-      
     }
     setLoadingId(null);
   }
