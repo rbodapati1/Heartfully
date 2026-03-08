@@ -1,21 +1,18 @@
-// api/claude.js — Vercel serverless function
-// This keeps your Anthropic API key hidden from the browser.
-//
-// SETUP:
-//   1. In your Vercel dashboard → your project → Settings → Environment Variables
-//   2. Add:  ANTHROPIC_API_KEY  =  your key from console.anthropic.com
-//   3. Deploy — done. The key never appears in your frontend code.
+// api/claude.js — Vercel serverless proxy for Anthropic API
 
 export default async function handler(req, res) {
-  // Only allow POST
+  // Handle CORS preflight
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+
+  if (req.method === "OPTIONS") {
+    return res.status(200).end();
+  }
+
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method not allowed" });
   }
-
-  // Basic CORS — only allow your own domain
-  res.setHeader("Access-Control-Allow-Origin", "https://heartfully.app");
-  res.setHeader("Access-Control-Allow-Methods", "POST");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
 
   try {
     const response = await fetch("https://api.anthropic.com/v1/messages", {
@@ -31,12 +28,13 @@ export default async function handler(req, res) {
     const data = await response.json();
 
     if (!response.ok) {
+      console.error("Anthropic error:", data);
       return res.status(response.status).json(data);
     }
 
     return res.status(200).json(data);
   } catch (err) {
     console.error("Proxy error:", err);
-    return res.status(500).json({ error: "Internal server error" });
+    return res.status(500).json({ error: "Internal server error", detail: err.message });
   }
 }
