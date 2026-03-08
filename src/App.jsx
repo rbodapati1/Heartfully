@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+
 const LANGUAGES = [
   { id:"en", label:"English", flag:"🇬🇧", nativeName:"English" },
   { id:"es", label:"Spanish", flag:"🇪🇸", nativeName:"Español" },
