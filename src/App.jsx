@@ -278,22 +278,51 @@ function AppPage({theme}){
 
               {showPersonalize&&<div style={{marginBottom:"16px"}}><PersonalizationPanel person={ap} config={cfg} onSave={data=>savePersonalize(ap,data)} onClose={()=>setShowPersonalize(false)}/></div>}
 
-              {showContactPanel&&!showPersonalize&&(<div style={{background:cfg.bg,border:`1.5px solid ${cfg.color}33`,borderRadius:"14px",padding:"13px",marginBottom:"14px",animation:"slideDown .2s ease"}}>
-                <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:"9px"}}>
-                  <span style={{fontSize:"12px",fontWeight:"600",color:"var(--text)",fontFamily:"var(--fd)"}}>📇 Contact Info{ap.contactName&&<span style={{fontWeight:"normal",color:"var(--muted)",fontStyle:"italic",fontFamily:"var(--fb)"}}> · {ap.contactName}</span>}</span>
-                  <div style={{display:"flex",gap:"4px"}}>
-                    {("contacts"in navigator&&"ContactsManager"in window)&&<button className="btn" onClick={()=>pickContact(ap.id)} disabled={contactLoading} style={{background:"var(--dark)",color:"var(--darkText)",borderRadius:"7px",padding:"3px 9px",fontSize:"11px",display:"flex",alignItems:"center",gap:"3px"}}>{contactLoading?<div style={{width:"9px",height:"9px",border:"1.5px solid rgba(255,255,255,.4)",borderTopColor:"white",borderRadius:"50%",animation:"spin .8s linear infinite"}}/>:"📱"}{contactLoading?"…":"From Device"}</button>}
-                    {editContact?(<><button className="btn" onClick={()=>saveContactEdit(ap)} style={{background:cfg.color,color:"white",borderRadius:"7px",padding:"3px 9px",fontSize:"11px"}}>Save</button><button className="btn" onClick={()=>setEditContact(null)} style={{background:"rgba(255,255,255,.8)",border:`1px solid ${theme.border}`,borderRadius:"7px",padding:"3px 8px",fontSize:"11px",color:"var(--sub)"}}>Cancel</button></>):(<button className="btn" onClick={()=>setEditContact({phone:ap.phone||"",email:ap.email||""})} style={{background:"rgba(255,255,255,.8)",border:`1px solid ${theme.border}`,borderRadius:"7px",padding:"3px 8px",fontSize:"11px",color:"var(--text)"}}>✏️ Edit</button>)}
-                    <button className="btn" onClick={()=>{setShowContactPanel(false);setEditContact(null);}} style={{background:"none",color:"var(--muted)",fontSize:"13px",padding:"2px 4px"}}>✕</button>
+              {showContactPanel&&!showPersonalize&&(<div style={{background:cfg.bg,border:`1.5px solid ${cfg.color}33`,borderRadius:"14px",padding:"15px",marginBottom:"14px",animation:"slideDown .22s ease"}}>
+                {/* Header */}
+                <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:"12px"}}>
+                  <div>
+                    <div style={{fontSize:"13px",fontWeight:"600",color:"var(--text)",fontFamily:"var(--fd)"}}>How to reach {ap.nickname?.trim()||ap.name}</div>
+                    <div style={{fontSize:"11px",color:"var(--muted)",marginTop:"2px"}}>Add phone or email to send messages directly</div>
+                  </div>
+                  <button className="btn" onClick={()=>{setShowContactPanel(false);setEditContact(null);}} style={{background:"none",color:"var(--muted)",fontSize:"15px",padding:"2px 6px",marginLeft:"8px"}}>✕</button>
+                </div>
+                {/* Import from device — only shown where supported (Android Chrome) */}
+                {"contacts"in navigator&&"ContactsManager"in window&&(
+                  <button className="btn" onClick={()=>pickContact(ap.id)} disabled={contactLoading}
+                    style={{width:"100%",background:"var(--dark)",color:"var(--darkText)",borderRadius:"10px",padding:"9px 14px",fontSize:"13px",display:"flex",alignItems:"center",justifyContent:"center",gap:"7px",marginBottom:"12px"}}>
+                    {contactLoading?<div style={{width:"11px",height:"11px",border:"1.5px solid rgba(255,255,255,.4)",borderTopColor:"white",borderRadius:"50%",animation:"spin .8s linear infinite"}}/>:"📱"}
+                    {contactLoading?"Importing…":"Import from Contacts"}
+                  </button>
+                )}
+                {/* Always-visible manual entry */}
+                <div style={{display:"flex",gap:"8px",flexWrap:"wrap",marginBottom:"10px"}}>
+                  <div style={{flex:1,minWidth:"130px"}}>
+                    <div style={{fontSize:"11px",color:"var(--muted)",marginBottom:"4px",display:"flex",alignItems:"center",gap:"4px"}}>📞 Phone number</div>
+                    <input
+                      value={editContact?.phone??ap.phone??""}
+                      onChange={e=>setEditContact(c=>({...(c||{phone:ap.phone||"",email:ap.email||""}),phone:e.target.value}))}
+                      onFocus={()=>{if(!editContact)setEditContact({phone:ap.phone||"",email:ap.email||""});}}
+                      placeholder="e.g. +1 555 000 0000"
+                      type="tel"
+                      style={{width:"100%",border:`1.5px solid ${cfg.color}44`,borderRadius:"9px",padding:"8px 11px",fontSize:"13px",background:"rgba(255,255,255,.92)",boxSizing:"border-box",color:"var(--text)"}}/>
+                  </div>
+                  <div style={{flex:1,minWidth:"130px"}}>
+                    <div style={{fontSize:"11px",color:"var(--muted)",marginBottom:"4px",display:"flex",alignItems:"center",gap:"4px"}}>✉️ Email address</div>
+                    <input
+                      value={editContact?.email??ap.email??""}
+                      onChange={e=>setEditContact(c=>({...(c||{phone:ap.phone||"",email:ap.email||""}),email:e.target.value}))}
+                      onFocus={()=>{if(!editContact)setEditContact({phone:ap.phone||"",email:ap.email||""});}}
+                      placeholder="e.g. name@email.com"
+                      type="email"
+                      style={{width:"100%",border:`1.5px solid ${cfg.color}44`,borderRadius:"9px",padding:"8px 11px",fontSize:"13px",background:"rgba(255,255,255,.92)",boxSizing:"border-box",color:"var(--text)"}}/>
                   </div>
                 </div>
-                {editContact?(<div style={{display:"flex",gap:"6px",flexWrap:"wrap"}}>
-                  <div style={{flex:1,minWidth:"120px"}}><div style={{fontSize:"10px",color:"var(--muted)",marginBottom:"3px"}}>📞 Phone</div><input value={editContact.phone} onChange={e=>setEditContact(c=>({...c,phone:e.target.value}))} placeholder="+1 555 000 0000" style={{width:"100%",border:`1px solid ${theme.border}`,borderRadius:"8px",padding:"5px 9px",fontSize:"12px",background:"rgba(255,255,255,.9)",boxSizing:"border-box",color:"var(--text)"}}/></div>
-                  <div style={{flex:1,minWidth:"120px"}}><div style={{fontSize:"10px",color:"var(--muted)",marginBottom:"3px"}}>✉️ Email</div><input value={editContact.email} onChange={e=>setEditContact(c=>({...c,email:e.target.value}))} placeholder="email@example.com" style={{width:"100%",border:`1px solid ${theme.border}`,borderRadius:"8px",padding:"5px 9px",fontSize:"12px",background:"rgba(255,255,255,.9)",boxSizing:"border-box",color:"var(--text)"}}/></div>
-                </div>):(<div style={{display:"flex",gap:"7px",flexWrap:"wrap"}}>
-                  {ap.phone?<div style={{display:"flex",alignItems:"center",gap:"5px",background:"rgba(255,255,255,.7)",borderRadius:"8px",padding:"4px 10px",fontSize:"12px",color:"var(--text)"}}>📞 {ap.phone}</div>:<span style={{fontSize:"11px",color:"var(--muted)",fontStyle:"italic"}}>No phone added</span>}
-                  {ap.email&&<div style={{display:"flex",alignItems:"center",gap:"5px",background:"rgba(255,255,255,.7)",borderRadius:"8px",padding:"4px 10px",fontSize:"12px",color:"var(--text)"}}>✉️ {ap.email}</div>}
-                </div>)}
+                {/* Save button — only shown when there are unsaved changes */}
+                {editContact&&<button className="btn" onClick={()=>saveContactEdit(ap)}
+                  style={{width:"100%",background:cfg.color,color:"white",borderRadius:"10px",padding:"9px",fontSize:"13px",fontWeight:"600",boxShadow:`0 3px 10px ${cfg.color}44`}}>
+                  Save Contact ✓
+                </button>}
               </div>)}
 
               {/* Free prompt */}
