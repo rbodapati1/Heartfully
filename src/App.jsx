@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import { Analytics } from "@vercel/analytics/react";
 
 const LANGUAGES = [
   { id:"en", label:"English", flag:"🇬🇧", nativeName:"English" },
@@ -498,4 +499,5 @@ export default function App(){
     {page==="app" &&<AppPage theme={theme}/>}
     {page==="share"&&<SharePage setPage={setPage} theme={theme}/>}
     {page==="faq" &&<FAQPage setPage={setPage} theme={theme}/>}
+    <Analytics />
   </>);}
